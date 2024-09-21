@@ -1,12 +1,12 @@
 package app
 
 import (
-	"github.com/realm76/ranger/ent"
+	"database/sql"
 	"go.uber.org/zap"
 	"net/http"
 )
 
-func NewServer(logger *zap.SugaredLogger, client *ent.Client) http.Handler {
+func NewServer(logger *zap.SugaredLogger, db *sql.DB) http.Handler {
 	mux := http.NewServeMux()
 
 	var handler http.Handler = mux
@@ -16,7 +16,7 @@ func NewServer(logger *zap.SugaredLogger, client *ent.Client) http.Handler {
 		mux.ServeHTTP(w, r)
 	})
 
-	addRoutes(logger, client, mux)
+	addRoutes(logger, db, mux)
 
 	return handler
 }

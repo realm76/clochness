@@ -2,10 +2,10 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/realm76/ranger/ent"
-	"github.com/realm76/ranger/internal/app"
+	"github.com/realm76/clochness/internal/app"
 	"go.uber.org/zap"
 	"log"
 	"net"
@@ -15,29 +15,34 @@ import (
 	"sync"
 	"time"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/lib/pq"
 )
 
 func main() {
 	ctx := context.Background()
 
-	client, err := ent.Open("sqlite3", "file:ent?mode=memory&cache=shared&_fk=1")
+	host := "localhost"
+	port := 5432
+	user := "admin"
+	password := "admin"
+	dbName := "clochness"
+
+	var connectString = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbName)
+
+	db, err := sql.Open("postgres", connectString)
 	if err != nil {
-		log.Fatalf("failed opening connection to sqlite: %v", err)
-	}
-	defer client.Close()
-	// Run the auto migration tool.
-	if err := client.Schema.Create(context.Background()); err != nil {
-		log.Fatalf("failed creating schema resources: %v", err)
+		panic(err)
 	}
 
-	if err := run(ctx, client); err != nil {
+	defer db.Close()
+
+	if err := run(ctx, db); err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "%v\n", err)
 		os.Exit(1)
 	}
 }
 
-func run(ctx context.Context, client *ent.Client) error {
+func run(ctx context.Context, db *sql.DB) error {
 	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt)
 
 	defer cancel()
@@ -45,7 +50,7 @@ func run(ctx context.Context, client *ent.Client) error {
 	defer logger.Sync() // flushes buffer, if any
 	sugar := logger.Sugar()
 
-	appServer := app.NewServer(sugar, client)
+	appServer := app.NewServer(sugar, db)
 	httpServer := &http.Server{
 		Addr:    net.JoinHostPort("", "3000"),
 		Handler: appServer,
