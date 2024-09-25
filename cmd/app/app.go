@@ -8,7 +8,6 @@ import (
 	"github.com/realm76/clochness/internal/app"
 	"go.uber.org/zap"
 	"log"
-	"net"
 	"net/http"
 	"os"
 	"os/signal"
@@ -51,10 +50,7 @@ func run(ctx context.Context, db *sql.DB) error {
 	sugar := logger.Sugar()
 
 	appServer := app.NewServer(sugar, db)
-	httpServer := &http.Server{
-		Addr:    net.JoinHostPort("", "3000"),
-		Handler: appServer,
-	}
+	httpServer := appServer.HttpServer()
 
 	go func() {
 		log.Printf("server listening on %s", httpServer.Addr)

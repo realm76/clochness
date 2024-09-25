@@ -1,3 +1,4 @@
+-- +goose Up
 CREATE TABLE IF NOT EXISTS users
 (
     id       SERIAL PRIMARY KEY,
@@ -41,7 +42,7 @@ CREATE TABLE IF NOT EXISTS entries
 (
     id          SERIAL PRIMARY KEY,
     user_id     INT NOT NULL,
-    project_id  INT NOT NULL,
+    project_id  INT,
     description TEXT,
     start_date  DATE      DEFAULT CURRENT_DATE,
     end_date    DATE      DEFAULT CURRENT_DATE,
@@ -50,3 +51,11 @@ CREATE TABLE IF NOT EXISTS entries
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
     FOREIGN KEY (project_id) REFERENCES projects (id) ON DELETE CASCADE
 );
+
+-- +goose Down
+DROP TABLE IF EXISTS entries CASCADE;
+DROP TABLE IF EXISTS projects CASCADE;
+DROP TABLE IF EXISTS user_organizations CASCADE;
+DROP TABLE IF EXISTS organizations CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+
