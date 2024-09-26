@@ -12,7 +12,7 @@ type Entry struct {
 	ID          int32
 	UserID      int32
 	ProjectID   pgtype.Int4
-	Description pgtype.Text
+	Description string
 	StartDate   pgtype.Date
 	EndDate     pgtype.Date
 	CreatedAt   pgtype.Timestamp

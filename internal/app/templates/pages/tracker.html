@@ -1,5 +1,19 @@
 {{ define "content" }}
-    <label>
-        <input type="text" name="new_entry" />
-    </label>
+    <form action="/tracker" method="post" hx-boost="true">
+        <label>
+            <input
+                    type="text"
+                    name="description"
+            />
+            <button
+                    type="submit"
+            >Create</button>
+        </label>
+    </form>
+
+    <ul>
+        {{ range $entry := .Entries }}
+            <li>{{ $entry.Description }}</li>
+        {{ end }}
+    </ul>
 {{ end }}

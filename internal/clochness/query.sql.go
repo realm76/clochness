@@ -32,7 +32,7 @@ RETURNING id, user_id, project_id, description, start_date, end_date, created_at
 type CreateEntryParams struct {
 	UserID      int32
 	ProjectID   pgtype.Int4
-	Description pgtype.Text
+	Description string
 	StartDate   pgtype.Date
 	EndDate     pgtype.Date
 }
@@ -142,7 +142,7 @@ type UpdateEntryParams struct {
 	ID          int32
 	UserID      int32
 	ProjectID   pgtype.Int4
-	Description pgtype.Text
+	Description string
 	StartDate   pgtype.Date
 	EndDate     pgtype.Date
 }

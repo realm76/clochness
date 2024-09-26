@@ -2,9 +2,9 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/realm76/clochness/internal/app"
 	"go.uber.org/zap"
 	"log"
@@ -28,20 +28,20 @@ func main() {
 
 	var connectString = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbName)
 
-	db, err := sql.Open("postgres", connectString)
+	dbpool, err := pgxpool.New(context.Background(), connectString)
 	if err != nil {
 		panic(err)
 	}
 
-	defer db.Close()
+	defer dbpool.Close()
 
-	if err := run(ctx, db); err != nil {
+	if err := run(ctx, dbpool); err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "%v\n", err)
 		os.Exit(1)
 	}
 }
 
-func run(ctx context.Context, db *sql.DB) error {
+func run(ctx context.Context, db *pgxpool.Pool) error {
 	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt)
 
 	defer cancel()
