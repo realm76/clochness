@@ -9,6 +9,7 @@ import (
 	"go.uber.org/zap"
 	"html/template"
 	"io"
+	"io/fs"
 	"net"
 	"net/http"
 	"strings"
@@ -16,6 +17,7 @@ import (
 
 //go:embed assets/*
 var staticFiles embed.FS
+var staticAssets fs.FS = staticFiles
 
 type server struct {
 	logger    *zap.SugaredLogger
@@ -34,9 +36,6 @@ func NewServer(logger *zap.SugaredLogger, db *pgxpool.Pool) *server {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 
-	fs := http.FileServer(http.FS(staticFiles))
-	r.Handle("/assets/*", http.StripPrefix("/assets/", fs))
-
 	s := &server{
 		logger:    logger,
 		db:        db,
@@ -46,6 +45,18 @@ func NewServer(logger *zap.SugaredLogger, db *pgxpool.Pool) *server {
 	}
 
 	r.Route("/tracker", s.tracker)
+
+	htmlContent, err := fs.Sub(staticAssets, "assets")
+	if err != nil {
+		panic(err)
+	}
+
+	r.Get("/assets/*", func(w http.ResponseWriter, r *http.Request) {
+		rctx := chi.RouteContext(r.Context())
+		pathPrefix := strings.TrimSuffix(rctx.RoutePattern(), "/*")
+		cs := http.StripPrefix(pathPrefix, http.FileServer(http.FS(htmlContent)))
+		cs.ServeHTTP(w, r)
+	})
 
 	return s
 }

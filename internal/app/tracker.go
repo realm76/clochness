@@ -2,8 +2,10 @@ package app
 
 import (
 	"github.com/go-chi/chi/v5"
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/realm76/clochness/internal/clochness"
 	"net/http"
+	"time"
 )
 
 func (s *server) tracker(cr chi.Router) {
@@ -29,6 +31,10 @@ func (s *server) postTracker(w http.ResponseWriter, req *http.Request) {
 	entry := clochness.CreateEntryParams{
 		UserID:      1,
 		Description: desc,
+		StartDate: pgtype.Date{
+			Time:  time.Now(),
+			Valid: true,
+		},
 	}
 
 	_, err := s.queries.CreateEntry(req.Context(), entry)

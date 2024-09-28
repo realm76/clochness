@@ -1,19 +1,40 @@
 {{ define "content" }}
     <form action="/tracker" method="post" hx-boost="true">
         <label>
-            <input
-                    type="text"
-                    name="description"
-            />
-            <button
-                    type="submit"
-            >Create</button>
+            <div class="join">
+                <input
+                        type="text"
+                        placeholder="Description"
+                        name="description"
+                        class="input input-bordered w-full max-w-xs join-item" />
+
+                <button class="btn btn-square join-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-play-fill" viewBox="0 0 16 16">
+                        <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393"/>
+                    </svg>
+                </button>
+            </div>
         </label>
     </form>
 
-    <ul>
+    <ul class="list-none">
         {{ range $entry := .Entries }}
-            <li>{{ $entry.Description }}</li>
+
+            <li>
+                <form>
+                    <div class="join">
+                    <span class="join-item">
+                        {{ $entry.Description }}
+                    </span>
+
+                        <button class="btn btn-square join-item">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-play-fill" viewBox="0 0 16 16">
+                                <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393"/>
+                            </svg>
+                        </button>
+                    </div>
+                </form>
+            </li>
         {{ end }}
     </ul>
 {{ end }}

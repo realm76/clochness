@@ -4,6 +4,9 @@ import path from 'path';
 export default defineConfig({
     build: {
         outDir: "../internal/app/assets",
+        watch: {
+            include: "../internal/app/templates/*.html"
+        },
         lib: {
             entry: path.resolve(__dirname, 'src/index.ts'), // Your library entry point
             name: 'Clochness', // Global name for UMD/IIFE builds

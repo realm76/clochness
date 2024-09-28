@@ -41,13 +41,13 @@ CREATE TABLE IF NOT EXISTS projects
 CREATE TABLE IF NOT EXISTS entries
 (
     id          SERIAL PRIMARY KEY,
-    user_id     INT NOT NULL,
+    user_id     INT  NOT NULL,
     project_id  INT,
-    description TEXT NOT NULL,
-    start_date  DATE      DEFAULT NULL,
-    end_date    DATE      DEFAULT NULL,
-    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    description TEXT NOT NULL DEFAULT '',
+    start_date  DATE NOT NULL DEFAULT CURRENT_DATE,
+    end_date    DATE          DEFAULT NULL,
+    created_at  TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
+    updated_at  TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
     FOREIGN KEY (project_id) REFERENCES projects (id) ON DELETE CASCADE
 );
